@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     btn.setAttribute('aria-pressed', isLiked);
                     btn.classList.toggle('liked', isLiked);
                 });
-                lucide.createIcons();
+                if (window.lucide) lucide.createIcons();
             })
             .catch(err => console.error('Error loading likes:', err));
     };
@@ -119,8 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.toggle('dark');
         const isDark = document.body.classList.contains('dark');
         toggleIcon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
     });
 
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
 });
