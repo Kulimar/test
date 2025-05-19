@@ -1,5 +1,43 @@
 document.addEventListener('DOMContentLoaded', () => {
     const gallery = document.querySelector('.gallery');
+    const audio = document.getElementById('bg-audio');
+    let audioStarted = false;
+    let fadeOutStarted = false;
+
+    const fadeAudio = (from, to, duration) => {
+        const start = Date.now();
+        const step = () => {
+            const elapsed = Date.now() - start;
+            const progress = Math.min(elapsed / duration, 1);
+            audio.volume = from + (to - from) * progress;
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            }
+        };
+        step();
+    };
+
+    const startAudio = () => {
+        if (audioStarted) return;
+        audioStarted = true;
+        audio.volume = 0;
+        const playPromise = audio.play();
+        if (playPromise) {
+            playPromise.then(() => {
+                fadeAudio(0, 0.2, 5000);
+            }).catch(() => {
+                audioStarted = false;
+            });
+        }
+    };
+
+    audio.addEventListener('timeupdate', () => {
+        if (!fadeOutStarted && audio.duration &&
+            audio.currentTime >= audio.duration - 10) {
+            fadeOutStarted = true;
+            fadeAudio(audio.volume, 0, 10000);
+        }
+    });
     const apiBase =
       'https://kulimar-gallery.netlify.app/.netlify/functions'; // full Netlify functions URL
     const likeEndpoint = `${apiBase}/likes`;
@@ -57,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
             photo.style.animationDelay = `${index * 0.2}s`;
 
             const img = document.createElement('img');
+            img.addEventListener('load', startAudio, { once: true });
             img.src = url;
             img.alt = id;
 
@@ -81,6 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
             photo.appendChild(img);
             photo.appendChild(overlay);
             gallery.appendChild(photo);
+
+            photo.addEventListener('mouseenter', startAudio, { once: true });
 
             photo.addEventListener('click', (e) => {
                 if (e.target.closest('.like-btn')) return; // ignore like clicks
