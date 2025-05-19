@@ -7,6 +7,47 @@ document.addEventListener('DOMContentLoaded', () => {
     let imageUrls = [];
     let currentIndex = 0;
 
+    const audio = document.getElementById('bg-music');
+    const maxVolume = 0.2;
+    const fadeDuration = 10000; // ms
+    let audioStarted = false;
+    let fadeOutScheduled = false;
+
+    const fadeIn = () => {
+        const start = Date.now();
+        const step = () => {
+            const progress = (Date.now() - start) / fadeDuration;
+            audio.volume = Math.min(maxVolume, maxVolume * progress);
+            if (progress < 1) requestAnimationFrame(step);
+        };
+        step();
+    };
+
+    const fadeOut = () => {
+        const startVolume = audio.volume;
+        const start = Date.now();
+        const step = () => {
+            const progress = (Date.now() - start) / fadeDuration;
+            audio.volume = Math.max(0, startVolume * (1 - progress));
+            if (progress < 1) requestAnimationFrame(step);
+        };
+        step();
+    };
+
+    const maybeStartAudio = () => {
+        if (audioStarted) return;
+        audioStarted = true;
+        audio.volume = 0;
+        audio.play().catch(() => {});
+        fadeIn();
+        audio.addEventListener('timeupdate', () => {
+            if (!fadeOutScheduled && audio.duration && audio.duration - audio.currentTime <= fadeDuration / 1000) {
+                fadeOutScheduled = true;
+                fadeOut();
+            }
+        });
+    };
+
     // create lightbox elements for full screen viewing
     const lightbox = document.createElement('div');
     lightbox.id = 'lightbox';
@@ -155,6 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
             img.addEventListener('load', () => {
                 loadedImages++;
                 updateLoadingBar();
+                maybeStartAudio();
             });
             img.addEventListener('error', () => {
                 loadedImages++;
@@ -182,6 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
             photo.appendChild(img);
             photo.appendChild(overlay);
             gallery.appendChild(photo);
+            photo.addEventListener('mouseenter', maybeStartAudio);
 
             photo.addEventListener('click', (e) => {
                 if (e.target.closest('.like-btn')) return; // ignore like clicks
