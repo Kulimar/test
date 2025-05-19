@@ -3,10 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // fallback image URLs used when the server is unavailable
     const fallbackUrls = [
-        'https://raw.githubusercontent.com/Kulimar/test/main/images/20250511_094432.jpg',
-        'https://raw.githubusercontent.com/Kulimar/test/main/images/IMG_3543.HEIC',
-        'https://raw.githubusercontent.com/Kulimar/test/main/images/IMG_3587.HEIC',
-        'https://raw.githubusercontent.com/Kulimar/test/main/images/IMG_3591.HEIC'
+        'images/20250511_094432.jpg'
     ];
 
     const renderImages = (urls) => {
@@ -28,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // try loading image list from the local server; fall back to predefined URLs
-    fetch('/images-list')
+    // load image list from a static file; fall back to predefined URLs
+    fetch('images-list.json')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`Server responded with ${response.status}`);
@@ -37,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         })
         .then(files => {
-            const urls = files.map(f => `/images/${f}`);
+            const urls = files.map(f => `images/${f}`);
             renderImages(urls);
         })
         .catch(err => {
