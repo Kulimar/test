@@ -1,13 +1,15 @@
 :root {
     --bg-color: #f0f8ff;
     --text-color: #333;
+    --bg-gradient-start: #f0f8ff;
+    --bg-gradient-end: #add8e6;
 }
 
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background-color: #f0f8ff;
-    background: linear-gradient(135deg, #f0f8ff 0%, #add8e6 100%);
+    background-color: var(--bg-gradient-start);
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
 
     margin: 0;
     padding: 0;
@@ -16,6 +18,8 @@ body {
 body.dark {
     --bg-color: #1a1a1a;
     --text-color: #eee;
+    --bg-gradient-start: #1a1a1a;
+    --bg-gradient-end: #333;
 }
 
 h1 {
