@@ -1,10 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     const gallery = document.querySelector('.gallery');
-    const apiBase = '/api';
+    const apiBase = '/api';   // keep if you have a proxy; otherwise absolute URL
+    const likeEndpoint = `${apiBase}/likes`;
 
     const fetchLikes = (ids) => {
         if (!ids.length) return;
-        fetch(`${apiBase}/likes?ids=${ids.join(',')}`)
+        fetch(`${likeEndpoint}?ids=${ids.join(',')}`)
             .then(r => r.json())
             .then(({ counts, liked }) => {
                 ids.forEach(id => {
@@ -76,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 countSpan.textContent = +countSpan.textContent + (likedNow ? 1 : -1);
 
                 const verb = likedNow ? 'POST' : 'DELETE';
-                const resp = await fetch(`${apiBase}/like`, {
+                const resp = await fetch(likeEndpoint, {
                     method: verb,
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ imageId: id })
