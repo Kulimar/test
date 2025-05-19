@@ -1,17 +1,17 @@
 # Gallery
 
-A simple gallery that displays images from the local `images` directory. If the
-`/images-list` route is unavailable (for example when the page is opened
-directly from a file instead of via the Node server) the gallery falls back to
-predefined remote URLs.
+A simple gallery that displays images from the local `images` directory. The
+list of files is read from `images-list.json`. If that file can't be loaded the
+gallery falls back to a predefined set of URLs.
 
 ## Running locally
 
-Install dependencies and start the server:
+You can simply open `index.html` in a browser or start the optional Node
+server for convenience:
 
 ```bash
 npm install
 npm start
 ```
 
-Open `http://localhost:3000` in your browser to view the site.
+Open `http://localhost:3000` in your browser if running the server.
