@@ -64,6 +64,38 @@ h1 {
     opacity: 0;
 }
 
+.overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.photo:hover .overlay,
+.photo:focus-within .overlay {
+    opacity: 1;
+}
+
+.like-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.like-btn.liked svg {
+    fill: currentColor;
+}
+
 #theme-toggle {
     position: fixed;
     top: 20px;
