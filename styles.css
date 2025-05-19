@@ -6,8 +6,9 @@
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    background-color: #f0f8ff;
+    background: linear-gradient(135deg, #f0f8ff 0%, #add8e6 100%);
+
     margin: 0;
     padding: 0;
 }
