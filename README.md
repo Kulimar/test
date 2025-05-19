@@ -1,6 +1,9 @@
 # Gallery
 
-A simple gallery that displays all images located in the `images` directory.
+A simple gallery that displays images from the local `images` directory. If the
+`/images-list` route is unavailable (for example when the page is opened
+directly from a file instead of via the Node server) the gallery falls back to
+predefined remote URLs.
 
 ## Running locally
 
