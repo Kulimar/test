@@ -91,6 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+
+        // Now that all <i data-lucide="heart"> elements exist, replace them with SVGs
+        if (window.lucide) lucide.createIcons();
     };
 
     // load image list from a static file; fall back to predefined URLs
@@ -122,5 +125,4 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.lucide) lucide.createIcons();
     });
 
-    if (window.lucide) lucide.createIcons();
 });
