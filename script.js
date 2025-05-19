@@ -4,6 +4,79 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingBar = document.getElementById('loading-bar');
     let totalImages = 0;
     let loadedImages = 0;
+    let imageUrls = [];
+    let currentIndex = 0;
+
+    // create lightbox elements for full screen viewing
+    const lightbox = document.createElement('div');
+    lightbox.id = 'lightbox';
+    lightbox.className = 'lightbox';
+
+    const lightboxImg = document.createElement('img');
+    lightboxImg.id = 'lightbox-img';
+
+    const closeBtn = document.createElement('button');
+    closeBtn.id = 'lightbox-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    const closeIcon = document.createElement('i');
+    closeIcon.dataset.lucide = 'x';
+    closeBtn.appendChild(closeIcon);
+
+    const prevBtn = document.createElement('button');
+    prevBtn.id = 'lightbox-prev';
+    prevBtn.className = 'nav-btn prev';
+    prevBtn.setAttribute('aria-label', 'Previous image');
+    const prevIcon = document.createElement('i');
+    prevIcon.dataset.lucide = 'chevron-left';
+    prevBtn.appendChild(prevIcon);
+
+    const nextBtn = document.createElement('button');
+    nextBtn.id = 'lightbox-next';
+    nextBtn.className = 'nav-btn next';
+    nextBtn.setAttribute('aria-label', 'Next image');
+    const nextIcon = document.createElement('i');
+    nextIcon.dataset.lucide = 'chevron-right';
+    nextBtn.appendChild(nextIcon);
+
+    lightbox.appendChild(closeBtn);
+    lightbox.appendChild(prevBtn);
+    lightbox.appendChild(lightboxImg);
+    lightbox.appendChild(nextBtn);
+    document.body.appendChild(lightbox);
+
+    const openLightbox = (index) => {
+        currentIndex = index;
+        lightboxImg.src = imageUrls[currentIndex];
+        lightbox.classList.add('open');
+        if (window.lucide) lucide.createIcons();
+    };
+
+    const closeLightbox = () => {
+        lightbox.classList.remove('open');
+    };
+
+    const showPrev = () => {
+        currentIndex = (currentIndex - 1 + imageUrls.length) % imageUrls.length;
+        lightboxImg.src = imageUrls[currentIndex];
+    };
+
+    const showNext = () => {
+        currentIndex = (currentIndex + 1) % imageUrls.length;
+        lightboxImg.src = imageUrls[currentIndex];
+    };
+
+    closeBtn.addEventListener('click', closeLightbox);
+    prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showPrev();
+    });
+    nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showNext();
+    });
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
+    });
 
     const updateLoadingBar = () => {
         if (!loadingContainer) return;
@@ -68,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadedImages = 0;
         updateLoadingBar();
 
+        imageUrls = urls;
         urls.forEach((url, index) => {
             const photo = document.createElement('div');
             const id = url.split('/').pop();
@@ -111,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             photo.addEventListener('click', (e) => {
                 if (e.target.closest('.like-btn')) return; // ignore like clicks
-                photo.classList.toggle('expanded');
+                openLightbox(index);
             });
 
             btn.addEventListener('click', async (e) => {
