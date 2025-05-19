@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const gallery = document.querySelector('.gallery');
-    const apiBase = '/api';   // keep if you have a proxy; otherwise absolute URL
+    const apiBase =
+      'https://kulimar-gallery.netlify.app/.netlify/functions'; // full Netlify functions URL
     const likeEndpoint = `${apiBase}/likes`;
 
     const fetchLikes = (ids) => {
