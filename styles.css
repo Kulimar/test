@@ -1,14 +1,25 @@
+:root {
+    --bg-color: #f0f8ff;
+    --text-color: #333;
+}
+
 body {
     font-family: Arial, sans-serif;
     text-align: center;
     background-color: #f0f8ff;
     background: linear-gradient(135deg, #f0f8ff 0%, #add8e6 100%);
+
     margin: 0;
     padding: 0;
 }
 
+body.dark {
+    --bg-color: #1a1a1a;
+    --text-color: #eee;
+}
+
 h1 {
-    color: #333;
+    color: var(--text-color);
     padding: 20px;
 }
 
@@ -47,6 +58,22 @@ h1 {
 .fade-in {
     animation: fadeIn 1s ease forwards;
     opacity: 0;
+}
+
+#theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+#theme-toggle svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
 }
 
 @keyframes fadeIn {
