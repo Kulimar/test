@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 photo.style.animationDelay = `${index * 0.2}s`;
 
                 const img = document.createElement('img');
-                img.src = `images/${file}`;
+                img.src = `/images/${file}`;
                 img.alt = file;
 
                 photo.appendChild(img);
