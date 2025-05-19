@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const gallery = document.querySelector('.gallery');
-    const apiBase =
-      'https://kulimar-gallery.netlify.app/.netlify/functions'; // full Netlify functions URL
-    const likeEndpoint = `${apiBase}/likes`;
+    // API endpoint for storing and retrieving likes
+    // Uses the relative /api/likes path so it works locally and when deployed
+    const likeEndpoint = '/api/likes';
 
     const localLikes = new Set(JSON.parse(localStorage.getItem('likedImages') || '[]'));
     const saveLocalLikes = () => localStorage.setItem('likedImages', JSON.stringify([...localLikes]));
