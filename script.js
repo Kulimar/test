@@ -2,7 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const gallery = document.querySelector('.gallery');
 
     fetch('/images-list')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Server responded with ${response.status}`);
+            }
+            return response.json();
+        })
         .then(files => {
             files.forEach((file, index) => {
                 const photo = document.createElement('div');
