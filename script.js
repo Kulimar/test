@@ -1,32 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
     const gallery = document.querySelector('.gallery');
 
-    fetch('/images-list')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Server responded with ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(files => {
-            files.forEach((file, index) => {
-                const photo = document.createElement('div');
-                photo.classList.add('photo', 'fade-in');
-                photo.style.animationDelay = `${index * 0.2}s`;
+    // Manually specified image URLs while automatic loading is disabled
+    const imageUrls = [
+        'https://raw.githubusercontent.com/Kulimar/test/main/images/20250511_094432.jpg',
+        'https://raw.githubusercontent.com/Kulimar/test/main/images/IMG_3543.HEIC',
+        'https://raw.githubusercontent.com/Kulimar/test/main/images/IMG_3587.HEIC',
+        'https://raw.githubusercontent.com/Kulimar/test/main/images/IMG_3591.HEIC'
+    ];
 
-                const img = document.createElement('img');
-                img.src = `/images/${file}`;
-                img.alt = file;
+    imageUrls.forEach((url, index) => {
+        const photo = document.createElement('div');
+        photo.classList.add('photo', 'fade-in');
+        photo.style.animationDelay = `${index * 0.2}s`;
 
-                photo.appendChild(img);
-                gallery.appendChild(photo);
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = url.split('/').pop();
 
-                photo.addEventListener('click', () => {
-                    photo.classList.toggle('expanded');
-                });
-            });
-        })
-        .catch(err => console.error('Error loading images:', err));
+        photo.appendChild(img);
+        gallery.appendChild(photo);
+
+        photo.addEventListener('click', () => {
+            photo.classList.toggle('expanded');
+        });
+    });
 
     const toggleButton = document.getElementById('theme-toggle');
     const toggleIcon = document.getElementById('theme-icon');
