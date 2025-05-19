@@ -1,5 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
     const gallery = document.querySelector('.gallery');
+    const apiBase = '/api';
+
+    const fetchLikes = (ids) => {
+        if (!ids.length) return;
+        fetch(`${apiBase}/likes?ids=${ids.join(',')}`)
+            .then(r => r.json())
+            .then(({ counts, liked }) => {
+                ids.forEach(id => {
+                    const photo = document.querySelector(`.photo[data-id="${id}"]`);
+                    if (!photo) return;
+                    const countEl = photo.querySelector('.like-count');
+                    const btn = photo.querySelector('.like-btn');
+                    countEl.textContent = counts[id] ?? 0;
+                    const isLiked = liked.includes(id);
+                    btn.dataset.liked = isLiked;
+                    btn.setAttribute('aria-pressed', isLiked);
+                    btn.classList.toggle('liked', isLiked);
+                });
+                lucide.createIcons();
+            })
+            .catch(err => console.error('Error loading likes:', err));
+    };
 
     // fallback image URLs used when the server is unavailable
     const fallbackUrls = [
@@ -9,18 +31,63 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderImages = (urls) => {
         urls.forEach((url, index) => {
             const photo = document.createElement('div');
+            const id = url.split('/').pop();
             photo.classList.add('photo', 'fade-in');
+            photo.dataset.id = id;
             photo.style.animationDelay = `${index * 0.2}s`;
 
             const img = document.createElement('img');
             img.src = url;
-            img.alt = url.split('/').pop();
+            img.alt = id;
+
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+
+            const btn = document.createElement('button');
+            btn.className = 'like-btn';
+            btn.setAttribute('aria-pressed', 'false');
+            btn.setAttribute('aria-label', 'Like image');
+            const icon = document.createElement('i');
+            icon.dataset.lucide = 'heart';
+            btn.appendChild(icon);
+
+            const countSpan = document.createElement('span');
+            countSpan.className = 'like-count';
+            countSpan.textContent = '0';
+
+            overlay.appendChild(btn);
+            overlay.appendChild(countSpan);
 
             photo.appendChild(img);
+            photo.appendChild(overlay);
             gallery.appendChild(photo);
 
-            photo.addEventListener('click', () => {
+            photo.addEventListener('click', (e) => {
+                if (e.target.closest('.like-btn')) return; // ignore like clicks
                 photo.classList.toggle('expanded');
+            });
+
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const likedNow = btn.dataset.liked !== 'true';
+                btn.dataset.liked = likedNow;
+                btn.setAttribute('aria-pressed', likedNow);
+                btn.classList.toggle('liked', likedNow);
+                countSpan.textContent = +countSpan.textContent + (likedNow ? 1 : -1);
+
+                const verb = likedNow ? 'POST' : 'DELETE';
+                const resp = await fetch(`${apiBase}/like`, {
+                    method: verb,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imageId: id })
+                });
+                if (!resp.ok) {
+                    btn.dataset.liked = !likedNow;
+                    btn.setAttribute('aria-pressed', !likedNow);
+                    btn.classList.toggle('liked', !likedNow);
+                    countSpan.textContent = +countSpan.textContent + (likedNow ? -1 : 1);
+                    alert('Could not save like—try again later');
+                }
             });
         });
     };
@@ -36,10 +103,12 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(files => {
             const urls = files.map(f => `images/${f}`);
             renderImages(urls);
+            fetchLikes(urls.map(u => u.split('/').pop()));
         })
         .catch(err => {
             console.error('Error loading images:', err);
             renderImages(fallbackUrls);
+            fetchLikes(fallbackUrls.map(u => u.split('/').pop()));
         });
 
     const toggleButton = document.getElementById('theme-toggle');
