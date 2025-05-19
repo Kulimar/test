@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
       'https://kulimar-gallery.netlify.app/.netlify/functions'; // full Netlify functions URL
     const likeEndpoint = `${apiBase}/likes`;
 
+    const localLikes = new Set(JSON.parse(localStorage.getItem('likedImages') || '[]'));
+    const saveLocalLikes = () => localStorage.setItem('likedImages', JSON.stringify([...localLikes]));
+
     const fetchLikes = (ids) => {
         if (!ids.length) return;
         fetch(`${likeEndpoint}?ids=${ids.join(',')}`)
@@ -15,14 +18,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     const countEl = photo.querySelector('.like-count');
                     const btn = photo.querySelector('.like-btn');
                     countEl.textContent = counts[id] ?? 0;
-                    const isLiked = liked.includes(id);
+                    const isLiked = localLikes.has(id) || liked.includes(id);
+                    if (isLiked) localLikes.add(id);
                     btn.dataset.liked = isLiked;
                     btn.setAttribute('aria-pressed', isLiked);
                     btn.classList.toggle('liked', isLiked);
                 });
+                saveLocalLikes();
                 if (window.lucide) lucide.createIcons();
             })
-            .catch(err => console.error('Error loading likes:', err));
+            .catch(err => {
+                console.error('Error loading likes:', err);
+                ids.forEach(id => {
+                    const photo = document.querySelector(`.photo[data-id="${id}"]`);
+                    if (!photo) return;
+                    const btn = photo.querySelector('.like-btn');
+                    const countEl = photo.querySelector('.like-count');
+                    countEl.textContent = countEl.textContent || 0;
+                    const isLiked = localLikes.has(id);
+                    btn.dataset.liked = isLiked;
+                    btn.setAttribute('aria-pressed', isLiked);
+                    btn.classList.toggle('liked', isLiked);
+                });
+            });
     };
 
     // fallback image URLs used when the server is unavailable
@@ -77,18 +95,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.classList.toggle('liked', likedNow);
                 countSpan.textContent = +countSpan.textContent + (likedNow ? 1 : -1);
 
-                const verb = likedNow ? 'POST' : 'DELETE';
-                const resp = await fetch(likeEndpoint, {
-                    method: verb,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ imageId: id })
-                });
-                if (!resp.ok) {
-                    btn.dataset.liked = !likedNow;
-                    btn.setAttribute('aria-pressed', !likedNow);
-                    btn.classList.toggle('liked', !likedNow);
-                    countSpan.textContent = +countSpan.textContent + (likedNow ? -1 : 1);
-                    alert('Could not save like—try again later');
+                if (likedNow) {
+                    localLikes.add(id);
+                } else {
+                    localLikes.delete(id);
+                }
+                saveLocalLikes();
+
+                try {
+                    const verb = likedNow ? 'POST' : 'DELETE';
+                    const resp = await fetch(likeEndpoint, {
+                        method: verb,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ imageId: id })
+                    });
+                    if (!resp.ok) {
+                        console.error('Could not save like');
+                    }
+                } catch (err) {
+                    console.error('Error saving like:', err);
                 }
             });
         });
