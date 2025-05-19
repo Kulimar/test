@@ -1,5 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
     const gallery = document.querySelector('.gallery');
+    const loadingContainer = document.getElementById('loading-container');
+    const loadingBar = document.getElementById('loading-bar');
+    let totalImages = 0;
+    let loadedImages = 0;
+
+    const updateLoadingBar = () => {
+        if (!loadingContainer) return;
+        const pct = totalImages ? (loadedImages / totalImages) * 100 : 0;
+        loadingBar.style.width = `${pct}%`;
+        if (totalImages && loadedImages >= totalImages) {
+            loadingContainer.classList.add('hidden');
+        } else {
+            loadingContainer.classList.remove('hidden');
+        }
+    };
     const apiBase =
       'https://kulimar-gallery.netlify.app/.netlify/functions'; // full Netlify functions URL
     const likeEndpoint = `${apiBase}/likes`;
@@ -49,6 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     const renderImages = (urls) => {
+        totalImages = urls.length;
+        loadedImages = 0;
+        updateLoadingBar();
+
         urls.forEach((url, index) => {
             const photo = document.createElement('div');
             const id = url.split('/').pop();
@@ -59,6 +78,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const img = document.createElement('img');
             img.src = url;
             img.alt = id;
+            img.addEventListener('load', () => {
+                loadedImages++;
+                updateLoadingBar();
+            });
+            img.addEventListener('error', () => {
+                loadedImages++;
+                updateLoadingBar();
+            });
 
             const overlay = document.createElement('div');
             overlay.className = 'overlay';
