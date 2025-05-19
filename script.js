@@ -36,17 +36,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const maybeStartAudio = () => {
         if (audioStarted) return;
-        audioStarted = true;
         audio.volume = 0;
-        audio.play().catch(() => {});
-        fadeIn();
-        audio.addEventListener('timeupdate', () => {
-            if (!fadeOutScheduled && audio.duration && audio.duration - audio.currentTime <= fadeDuration / 1000) {
-                fadeOutScheduled = true;
-                fadeOut();
-            }
-        });
+        audio.play()
+            .then(() => {
+                audioStarted = true;
+                fadeIn();
+                audio.addEventListener('timeupdate', () => {
+                    if (!fadeOutScheduled && audio.duration && audio.duration - audio.currentTime <= fadeDuration / 1000) {
+                        fadeOutScheduled = true;
+                        fadeOut();
+                    }
+                });
+            })
+            .catch(() => {
+                // still blocked – wait for user interaction
+            });
     };
+
+    // Start playback on the first user gesture if it didn't autoplay
+    document.addEventListener('click', () => maybeStartAudio(), { once: true });
 
     // create lightbox elements for full screen viewing
     const lightbox = document.createElement('div');
@@ -196,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
             img.addEventListener('load', () => {
                 loadedImages++;
                 updateLoadingBar();
-                maybeStartAudio();
             });
             img.addEventListener('error', () => {
                 loadedImages++;
