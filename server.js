@@ -11,7 +11,11 @@ app.get('/images-list', (req, res) => {
     if (err) {
       return res.status(500).json({ error: 'Unable to scan directory' });
     }
-    const imageFiles = files.filter(file => /\.(jpe?g|png|gif|bmp|webp|heic)$/i.test(file));
+    const imageFiles = Array.from(new Set(
+      files
+        .filter(file => /\.(jpe?g|png|gif|bmp|webp|heic)$/i.test(file))
+        .map(file => file.replace(/\.heic$/i, '.png'))
+    ));
     res.json(imageFiles);
   });
 });
