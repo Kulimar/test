@@ -1,15 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const photos = document.querySelectorAll('.photo');
+    const gallery = document.querySelector('.gallery');
 
-    photos.forEach((photo, index) => {
-        // initial fade-in animation delay
-        photo.classList.add('fade-in');
-        photo.style.animationDelay = `${index * 0.2}s`;
+    fetch('/images-list')
+        .then(response => response.json())
+        .then(files => {
+            files.forEach((file, index) => {
+                const photo = document.createElement('div');
+                photo.classList.add('photo', 'fade-in');
+                photo.style.animationDelay = `${index * 0.2}s`;
 
-        photo.addEventListener('click', () => {
-            photo.classList.toggle('expanded');
-        });
-    });
+                const img = document.createElement('img');
+                img.src = `images/${file}`;
+                img.alt = file;
+
+                photo.appendChild(img);
+                gallery.appendChild(photo);
+
+                photo.addEventListener('click', () => {
+                    photo.classList.toggle('expanded');
+                });
+            });
+        })
+        .catch(err => console.error('Error loading images:', err));
 
     const toggleButton = document.getElementById('theme-toggle');
     const toggleIcon = document.getElementById('theme-icon');
