@@ -19,7 +19,10 @@ async function writeDb(db) {
 
 exports.handler = async (event) => {
   const method = event.httpMethod;
-  const headers = { 'Content-Type': 'application/json' };
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+  };
   const parseCookies = (str) => Object.fromEntries(str.split(';').map(c => c.trim().split('=').map(decodeURIComponent)).filter(p => p[0]));
   const serializeCookie = (name, val, opts = {}) => {
     const pairs = [`${name}=${encodeURIComponent(val)}`];
