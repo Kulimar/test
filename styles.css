@@ -1,8 +1,9 @@
 :root {
-    --bg-color: #f0f8ff;
+    /* Updated to use the new purple/teal color scheme */
+    --bg-color: #8A8AE2; /* purple */
     --text-color: #333;
-    --bg-gradient-start: #f0f8ff;
-    --bg-gradient-end: #add8e6;
+    --bg-gradient-start: #8A8AE2; /* purple */
+    --bg-gradient-end: #4ED1C7; /* teal */
 }
 
 body {
@@ -21,17 +22,19 @@ body {
     z-index: 0;
     pointer-events: none;
     opacity: 0.1;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Crect width='20' height='20' fill='%23a4c639'/%3E%3Cpath d='M0 10h20v10H0z' fill='%2380b032'/%3E%3Ccircle cx='5' cy='5' r='3' fill='%23fff' fill-opacity='0.3'/%3E%3Ccircle cx='15' cy='15' r='3' fill='%23fff' fill-opacity='0.3'/%3E%3Ccircle cx='5' cy='15' r='3' fill='%23fff' fill-opacity='0.3'/%3E%3Ccircle cx='15' cy='5' r='3' fill='%23fff' fill-opacity='0.3'/%3E%3C/svg%3E");
+    /* Purple/teal pattern background */
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http://www.w3.org/2000/svg'%20width%3D'20'%20height%3D'20'%3E%3Crect%20width%3D'20'%20height%3D'20'%20fill%3D'%238A8AE2'/%3E%3Cpath%20d%3D'M0%2010h20v10H0z'%20fill%3D'%234ED1C7'/%3E%3Ccircle%20cx%3D'5'%20cy%3D'5'%20r%3D'3'%20fill%3D'%23fff'%20fill-opacity%3D'0.3'/%3E%3Ccircle%20cx%3D'15'%20cy%3D'15'%20r%3D'3'%20fill%3D'%23fff'%20fill-opacity%3D'0.3'/%3E%3Ccircle%20cx%3D'5'%20cy%3D'15'%20r%3D'3'%20fill%3D'%23fff'%20fill-opacity%3D'0.3'/%3E%3Ccircle%20cx%3D'15'%20cy%3D'5'%20r%3D'3'%20fill%3D'%23fff'%20fill-opacity%3D'0.3'/%3E%3C/svg%3E");
     background-size: 60px 60px;
     background-repeat: repeat;
     animation: scrollBackground 120s linear infinite;
 }
 
 body.dark {
+    /* Dark mode uses a deeper variant of the theme colors */
     --bg-color: #1a1a1a;
     --text-color: #eee;
-    --bg-gradient-start: #1a1a1a;
-    --bg-gradient-end: #333;
+    --bg-gradient-start: #2c2c54; /* dark purple */
+    --bg-gradient-end: #2a6460; /* dark teal */
 }
 
 h1 {
@@ -91,7 +94,8 @@ h1 {
     align-items: center;
     gap: 8px;
     padding: 4px 8px;
-    background: rgba(0, 0, 0, 0.5);
+    /* Slight purple tint for the overlay */
+    background: rgba(138, 138, 226, 0.5);
     color: #fff;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -107,6 +111,10 @@ h1 {
     border: none;
     color: inherit;
     cursor: pointer;
+}
+
+.like-btn.liked {
+    color: #4ED1C7; /* teal for liked hearts */
 }
 
 .like-btn.liked svg {
@@ -156,7 +164,7 @@ h1 {
 #loading-bar {
     width: 0%;
     height: 100%;
-    background: #29d;
+    background: #8A8AE2; /* purple accent */
     transition: width 0.2s ease;
 }
 
